@@ -1,0 +1,249 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maha Zone | Secure Admin Control</title>
+<style>
+:root {
+    --bg-dark: #05050a;
+    --panel-bg: #0f101a;
+    --border: rgba(168, 85, 247, 0.2);
+    --accent: #a855f7;
+    --text: #f3f4f6;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+body { background: var(--bg-dark); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+
+#loginModal {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.8), 0 0 30px rgba(168, 85, 247, 0.1);
+}
+#loginModal h2 { margin-bottom: 10px; font-size: 22px; color: #fff; }
+.input-box {
+    width: 100%;
+    background: #05050a;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.input-box:focus { border-color: var(--accent); }
+
+.btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), #ec4899);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+    transition: transform 0.2s, opacity 0.2s;
+}
+.btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+#adminPanel {
+    display: none;
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 650px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.8), 0 0 30px rgba(168, 85, 247, 0.1);
+}
+#adminPanel h2 { margin-bottom: 25px; font-size: 24px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+
+.form-group { margin-bottom: 22px; text-align: right; }
+.form-group label { display: block; font-size: 13px; color: #9ca3af; margin-bottom: 8px; font-weight: bold; }
+textarea.input-box { resize: vertical; height: 120px; }
+
+/* مربع السحب والإفلات وتجهيز الصورة */
+.drop-zone {
+    border: 2px dashed rgba(168, 85, 247, 0.4);
+    background: #05050a;
+    padding: 30px;
+    text-align: center;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #9ca3af;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+.drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(168, 85, 247, 0.03);
+    color: #fff;
+}
+.drop-zone input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+.preview-container {
+    margin-top: 15px;
+    display: none;
+    text-align: center;
+}
+.preview-container img {
+    max-width: 100%;
+    max-height: 180px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    object-fit: contain;
+}
+</style>
+</head>
+<body>
+
+<div id="loginModal">
+    <h2>🔐 بوابة التحكم المركزية</h2>
+    <p style="color:#9ca3af; font-size:13px; margin-bottom:25px;">أدخل مفتاح المصادقة السري للوصول إلى النظام</p>
+    <input type="password" id="adminPassInput" class="input-box" placeholder="كلمة المرور...">
+    <button class="btn" onclick="attemptLogin()">فتح لوحة العمليات</button>
+</div>
+
+<div id="adminPanel">
+    <h2>⚡ مركز حقن المنتجات السحابية</h2>
+    
+    <div class="form-group">
+        <label>اسم المنتج الإحترافي:</label>
+        <input type="text" id="prodTitle" class="input-box" placeholder="مثال: جهاز استشعار ذكي...">
+    </div>
+
+    <div class="form-group">
+        <label>سعر المنتج (ر.س):</label>
+        <input type="number" id="prodPrice" class="input-box" placeholder="مثال: 299">
+    </div>
+
+    <div class="form-group">
+        <label>صورة المنتج (اسحب وأفلت الصورة هنا أو اضغط للاختيار):</label>
+        <div class="drop-zone" id="dropZone">
+            📁 اسحب الصورة هنا أو اضغط لتحديدها من جهازك
+            <input type="file" id="imageFile" accept="image/*" onchange="handleImageSelect(this)">
+        </div>
+        <div class="preview-container" id="previewContainer">
+            <p style="font-size: 12px; color: #a855f7; margin-bottom: 5px;">معاينة الصورة المرفوعة:</p>
+            <img id="imagePreview" src="" alt="المعاينة">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>الوصف والتفاصيل الخوارزمية:</label>
+        <textarea id="prodDesc" class="input-box" placeholder="اكتب المواصفات والخصائص بدقة..."></textarea>
+    </div>
+
+    <button class="btn" onclick="addNewProduct()">🚀 إرسال ونشر المنتج فوراً للسحابة</button>
+</div>
+
+<script src="config.js"></script>
+<script>
+let uploadedImageBase64 = "";
+
+function attemptLogin() {
+    const pass = document.getElementById('adminPassInput').value;
+    if (pass === StoreConfig.adminPassword) {
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+    } else {
+        alert('❌ مفتاح المرور غير صحيح!');
+    }
+}
+
+// معالجة اختيار أو سحب الصورة وتحويلها لمعاينة مباشرة
+function handleImageSelect(input) {
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            uploadedImageBase64 = e.target.result;
+            const preview = document.getElementById('imagePreview');
+            preview.src = uploadedImageBase64;
+            document.getElementById('previewContainer').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// تأثيرات مرئية لمربع السحب والإفلات
+const dropZone = document.getElementById('dropZone');
+['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+});
+['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+});
+
+async function addNewProduct() {
+    const title = document.getElementById('prodTitle').value.trim();
+    const price = document.getElementById('prodPrice').value.trim();
+    const description = document.getElementById('prodDesc').value.trim();
+
+    if (!title || !price || !uploadedImageBase64) {
+        alert('⚠️ الرجاء إدخال الاسم، السعر، ورفع صورة المنتج عبر مربع السحب والإفلات!');
+        return;
+    }
+
+    try {
+        let response = await fetch(`${StoreConfig.baseUrl}/${StoreConfig.binId}/latest`, {
+            headers: { 'X-Master-Key': StoreConfig.apiKey }
+        });
+        let data = await response.json();
+        let products = data.record.products || [];
+
+        products.unshift({
+            id: Date.now(),
+            title: title,
+            price: price,
+            image: uploadedImageBase64, // تخزين الصورة مباشرة كبيانات رقمية آمنة
+            description: description,
+            date: new Date().toISOString()
+        });
+
+        let updateRes = await fetch(`${StoreConfig.baseUrl}/${StoreConfig.binId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': StoreConfig.apiKey
+            },
+            body: JSON.stringify({ products: products })
+        });
+
+        if (updateRes.ok) {
+            alert('🎉 تم حقن ونشر المنتج وصورته في السحابة بنجاح!');
+            document.getElementById('prodTitle').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodDesc').value = '';
+            document.getElementById('imageFile').value = '';
+            uploadedImageBase64 = '';
+            document.getElementById('previewContainer').style.display = 'none';
+        } else {
+            alert('❌ فشل حفظ البيانات في السيرفر الخارجي.');
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert('❌ حدث خطأ تقني أثناء الاتصال بالسحابة.');
+    }
+}
+</script>
+</body>
+</html>
