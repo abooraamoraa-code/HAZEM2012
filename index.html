@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Maha Zone | متجر العصر الرقمي</title>
+<!-- كود إثبات الملكية في Google Search Console -->
 <meta name="google-site-verification" content="fmIO4Mqa4kbHD9R2jhb-fLWyRyd3Bi9UDHC8v84CkZk" />
 <style>
 :root {
@@ -12,7 +13,6 @@
     --border-glow: rgba(168, 85, 247, 0.2);
     --accent-purple: #a855f7;
     --accent-pink: #ec4899;
-    --accent-green: #009966; /* اللون الأخضر لعلم فلسطين */
     --text-main: #f3f4f6;
     --text-muted: #9ca3af;
 }
@@ -44,32 +44,41 @@ header {
 
 .nav-links { display: flex; gap: 15px; align-items: center; }
 
+/* شارة علم فلسطين وغزة والضفة */
 .location-badge {
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-muted);
-    padding: 8px 15px;
+    padding: 8px 14px;
     border-radius: 8px;
     font-size: 12px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .palestine-flag {
-    width: 20px;
-    height: 14px;
+    width: 22px;
+    height: 15px;
     border-radius: 2px;
-    background: linear-gradient(to bottom, black 33.33%, white 33.33%, white 66.66%, #009966 66.66%);
+    display: inline-block;
     position: relative;
-    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    overflow: hidden;
 }
-.palestine-flag::after {
-    content: '';
+.palestine-flag .stripe {
+    height: 33.33%;
+    width: 100%;
+}
+.palestine-flag .black { background: #000; }
+.palestine-flag .white { background: #fff; }
+.palestine-flag .green { background: #007a3d; }
+.palestine-flag .triangle {
     position: absolute;
     top: 0; left: 0;
     width: 0; height: 0;
     border-style: solid;
-    border-width: 7px 0 7px 10px;
-    border-color: transparent transparent transparent red;
+    border-width: 7.5px 0 7.5px 11px;
+    border-color: transparent transparent transparent #ce1126;
 }
 
 .fb-btn {
@@ -167,11 +176,19 @@ footer {
 <header>
     <div class="logo">Maha Zone</div>
     <div class="nav-links">
+        <!-- شارة علم فلسطين مع غزة والضفة -->
         <div class="location-badge">
-            <div class="palestine-flag" title="فلسطين"></div>
-            <span>متوفر في غزة والضفة</span>
+            <div class="palestine-flag" title="فلسطين">
+                <div class="stripe black"></div>
+                <div class="stripe white"></div>
+                <div class="stripe green"></div>
+                <div class="triangle"></div>
+            </div>
+            <span>غزة والضفة</span>
         </div>
-        <a id="fbLink" href="https://www.google.com/search?q=Maha+Zone" target="_blank" class="fb-btn">
+
+        <!-- زر التواصل المعدل (Contact Maha Zone مع شعار مسنجر) -->
+        <a id="fbLink" href="#" target="_blank" class="fb-btn">
             <svg viewBox="0 0 24 24">
                 <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.91 1.455 5.494 3.737 7.152V22l3.414-1.874c.904.252 1.868.384 2.849.384 5.523 0 10-4.145 10-9.243C22 6.145 17.523 2 12 2zm1.05 12.315l-2.525-2.69-4.92 2.69 5.407-5.74 2.525 2.69 4.92-2.69-5.407 5.74z"/>
             </svg>
@@ -197,4 +214,51 @@ footer {
 </footer>
 
 <script src="config.js"></script>
-<script
+<script>
+// تعيين رابط زر التواصل مباشرة من إعدادات ملف config.js المحدث
+if (typeof StoreConfig !== 'undefined' && document.getElementById('fbLink')) {
+    document.getElementById('fbLink').href = StoreConfig.facebookUrl;
+}
+
+async function loadStoreProducts() {
+    const container = document.getElementById('productsContainer');
+    try {
+        const response = await fetch(`${StoreConfig.baseUrl}/${StoreConfig.binId}/latest`, {
+            headers: { 'X-Master-Key': StoreConfig.apiKey }
+        });
+        const data = await response.json();
+        const products = data.record.products || [];
+
+        if (products.length === 0) {
+            container.innerHTML = `<div class="loading">لا توجد منتجات متاحة في النظام حالياً. يجدر بمدير النظام إضافتها عبر لوحة التحكم!</div>`;
+            return;
+        }
+
+        container.innerHTML = "";
+        products.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <img src="${p.image}" alt="${p.title}" class="product-img" onerror="this.src='https://via.placeholder.com/300x200?text=Maha+Zone+Item'">
+                <div class="product-body">
+                    <div>
+                        <div class="product-title">${p.title}</div>
+                        <div class="product-desc">${p.description}</div>
+                    </div>
+                    <div class="product-footer">
+                        <span class="price">${p.price} ر.س</span>
+                        <button class="buy-btn" onclick="alert('تمت إضافة المنتج إلى سلة الشراء بنجاح!')">طلب فوري</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    } catch (err) {
+        container.innerHTML = `<div class="loading" style="color:#ef4444;">❌ فشل الاتصال بالسيرفر الخارجي.</div>`;
+    }
+}
+
+window.onload = loadStoreProducts;
+</script>
+</body>
+</html>
