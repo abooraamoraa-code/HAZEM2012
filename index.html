@@ -147,17 +147,22 @@ header {
 .product-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
 .price { font-size: 20px; font-weight: 900; background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .buy-btn {
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+    background: #0084ff;
     color: #fff;
     border: none;
     padding: 10px 18px;
     border-radius: 10px;
     font-weight: bold;
     cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     transition: opacity 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 132, 255, 0.4);
+    font-size: 13px;
 }
-.buy-btn:hover { opacity: 0.9; box-shadow: 0 6px 20px rgba(236, 72, 153, 0.6); }
+.buy-btn:hover { opacity: 0.9; box-shadow: 0 6px 20px rgba(0, 132, 255, 0.6); }
 
 .loading { text-align: center; font-size: 16px; color: var(--text-muted); grid-column: span 3; padding: 60px; }
 
@@ -187,7 +192,7 @@ footer {
             <span>غزة والضفة</span>
         </div>
 
-        <!-- زر التواصل Contact Maha Zone مع شعار مسنجر ورابط المراسلة المباشر -->
+        <!-- زر التواصل Contact Maha Zone مع شعار مسنجر -->
         <a id="fbLink" href="#" target="_blank" class="fb-btn">
             <svg viewBox="0 0 24 24">
                 <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.91 1.455 5.494 3.737 7.152V22l3.414-1.874c.904.252 1.868.384 2.849.384 5.523 0 10-4.145 10-9.243C22 6.145 17.523 2 12 2zm1.05 12.315l-2.525-2.69-4.92 2.69 5.407-5.74 2.525 2.69 4.92-2.69-5.407 5.74z"/>
@@ -215,7 +220,7 @@ footer {
 
 <script src="config.js"></script>
 <script>
-// تعيين رابط مسنجر مباشرة من إعدادات ملف config.js
+// تعيين رابط مسنجر مباشرة من إعدادات ملف config.js للزر العلوي
 if (typeof StoreConfig !== 'undefined' && document.getElementById('fbLink')) {
     document.getElementById('fbLink').href = StoreConfig.facebookUrl;
 }
@@ -238,6 +243,7 @@ async function loadStoreProducts() {
         products.forEach(p => {
             const card = document.createElement('div');
             card.className = 'product-card';
+            // تم تحويل زر طلب فوري إلى رابط تواصل مسنجر مباشر للمنتج
             card.innerHTML = `
                 <img src="${p.image}" alt="${p.title}" class="product-img" onerror="this.src='https://via.placeholder.com/300x200?text=Maha+Zone+Item'">
                 <div class="product-body">
@@ -247,7 +253,7 @@ async function loadStoreProducts() {
                     </div>
                     <div class="product-footer">
                         <span class="price">${p.price} ر.س</span>
-                        <button class="buy-btn" onclick="alert('تمت إضافة المنتج إلى سلة الشراء بنجاح!')">طلب فوري</button>
+                        <a href="${StoreConfig.facebookUrl}" target="_blank" class="buy-btn">تواصل مسنجر</a>
                     </div>
                 </div>
             `;
