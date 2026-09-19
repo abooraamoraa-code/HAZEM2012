@@ -44,7 +44,7 @@ header {
 
 .nav-links { display: flex; gap: 15px; align-items: center; }
 .fb-btn {
-    background: #1877f2;
+    background: #0084ff;
     color: #fff;
     padding: 8px 16px;
     border-radius: 8px;
@@ -53,11 +53,16 @@ header {
     font-weight: bold;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 0 15px rgba(24, 119, 242, 0.3);
+    box-shadow: 0 0 15px rgba(0, 132, 255, 0.3);
 }
-.fb-btn:hover { transform: translateY(-2px); box-shadow: 0 0 25px rgba(24, 119, 242, 0.6); }
+.fb-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+.fb-btn:hover { transform: translateY(-2px); box-shadow: 0 0 25px rgba(0, 132, 255, 0.6); }
 
 .hero {
     text-align: center;
@@ -133,7 +138,13 @@ footer {
 <header>
     <div class="logo">Maha Zone</div>
     <div class="nav-links">
-        <a id="fbLink" href="#" target="_blank" class="fb-btn">🌐 تواصل معنا عبر فيسبوك</a>
+        <!-- تم التعديل لتوجيه البحث لـ مها زون مع شعار مسنجر واسم بالإنجليزية -->
+        <a id="fbLink" href="https://www.google.com/search?q=%D9%85%D9%87%D8%A7+%D8%B2%D9%88%D9%86" target="_blank" class="fb-btn">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.91 1.455 5.494 3.737 7.152V22l3.414-1.874c.904.252 1.868.384 2.849.384 5.523 0 10-4.145 10-9.243C22 6.145 17.523 2 12 2zm1.05 12.315l-2.525-2.69-4.92 2.69 5.407-5.74 2.525 2.69 4.92-2.69-5.407 5.74z"/>
+            </svg>
+            Contact Maha Zone
+        </a>
     </div>
 </header>
 
@@ -155,8 +166,14 @@ footer {
 
 <script src="config.js"></script>
 <script>
-// تعيين رابط الفيسبوك تلقائياً من الإعدادات
-document.getElementById('fbLink').href = StoreConfig.facebookUrl;
+// تم ضبط الرابط الخاص بزر التواصل ليوجه لنتائج البحث عن "مها زون" (مع الاحتفاظ بإمكانية تعديله مستقبلاً إذا أردت عبر ملف الإعدادات أو تركه للبحث المباشر)
+const searchMahaZoneUrl = "https://www.google.com/search?q=Maha+Zone";
+const fbLinkElement = document.getElementById('fbLink');
+if (fbLinkElement) {
+    fbLinkElement.href = (typeof StoreConfig !== 'undefined' && StoreConfig.facebookUrl && StoreConfig.facebookUrl !== '#') 
+        ? StoreConfig.facebookUrl 
+        : searchMahaZoneUrl;
+}
 
 async function loadStoreProducts() {
     const container = document.getElementById('productsContainer');
