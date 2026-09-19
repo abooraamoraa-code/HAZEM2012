@@ -1,4 +1,4 @@
-﻿/**
+/**
  * إعدادات الاتصال السحابي وحماية لوحة الإدارة الفاخرة لـ Maha Zone
  */
 const StoreConfig = {
@@ -9,6 +9,6 @@ const StoreConfig = {
     // كلمة المرور الجديدة للوحة التحكم
     adminPassword: "HAZEM2012",
     
-    // رابط صفحة الفيسبوك للتواصل المباشر
-    facebookUrl: "https://www.facebook.com" 
+    // رابط التواصل المباشر (يمكنك استبداله برابط مسنجر أو بحث مباشر مخصص لمها زون)
+    facebookUrl: "https://www.google.com/search?q=Maha+Zone" 
 };
