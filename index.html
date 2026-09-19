@@ -138,8 +138,8 @@ footer {
 <header>
     <div class="logo">Maha Zone</div>
     <div class="nav-links">
-        <!-- تم التعديل لتوجيه البحث لـ مها زون مع شعار مسنجر واسم بالإنجليزية -->
-        <a id="fbLink" href="https://www.google.com/search?q=%D9%85%D9%87%D8%A7+%D8%B2%D9%88%D9%86" target="_blank" class="fb-btn">
+        <!-- تم وضع رابط نتائج البحث مباشرة هنا ليضمن عدم تغييره برابط الفيسبوك القديم -->
+        <a id="fbLink" href="https://www.google.com/search?q=Maha+Zone" target="_blank" class="fb-btn">
             <svg viewBox="0 0 24 24">
                 <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.91 1.455 5.494 3.737 7.152V22l3.414-1.874c.904.252 1.868.384 2.849.384 5.523 0 10-4.145 10-9.243C22 6.145 17.523 2 12 2zm1.05 12.315l-2.525-2.69-4.92 2.69 5.407-5.74 2.525 2.69 4.92-2.69-5.407 5.74z"/>
             </svg>
@@ -166,15 +166,6 @@ footer {
 
 <script src="config.js"></script>
 <script>
-// تم ضبط الرابط الخاص بزر التواصل ليوجه لنتائج البحث عن "مها زون" (مع الاحتفاظ بإمكانية تعديله مستقبلاً إذا أردت عبر ملف الإعدادات أو تركه للبحث المباشر)
-const searchMahaZoneUrl = "https://www.google.com/search?q=Maha+Zone";
-const fbLinkElement = document.getElementById('fbLink');
-if (fbLinkElement) {
-    fbLinkElement.href = (typeof StoreConfig !== 'undefined' && StoreConfig.facebookUrl && StoreConfig.facebookUrl !== '#') 
-        ? StoreConfig.facebookUrl 
-        : searchMahaZoneUrl;
-}
-
 async function loadStoreProducts() {
     const container = document.getElementById('productsContainer');
     try {
